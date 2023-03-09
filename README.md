@@ -27,7 +27,7 @@
 
 >./serve_uwsgi
 
-# Verificar.
+# Verificar
 >http://0.0.0.0:9191
 
 RUNNING
