@@ -3,7 +3,7 @@
 
 >. env/bin/active
 
-# 2. Instalar paquete.
+# 2. Instalar paquete
 >python setup.py develop
 
 # 3. config.ini (para modificar)
