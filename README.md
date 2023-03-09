@@ -1,4 +1,9 @@
 # 1. Crear entorno virtual
+
+>git clone git@github.com:jaglame/printdoc.git
+
+>cd printdoc
+
 >virtualenv env -p python3
 
 >. env/bin/active
@@ -7,16 +12,16 @@
 >python setup.py develop
 
 # 3. config.ini (para modificar)
->Copiar config_copy.ini y renombrar como config.ini
+> cd printdoc
+
+> cp config_copy.ini config.ini
 
 # 4. Levantar servicio
 ## Devel
->cd printdoc
 
 > python serve.py
 
 ## uwsgi
->cd printdoc
 
 >chmod +x serve_uwsgi
 
