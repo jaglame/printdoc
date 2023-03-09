@@ -1,0 +1,10 @@
+A Simple TEXT File
+This is a small demonstration .TEXT file -
+just for use in the Virtual Mechanics tutorials. More text. And more
+text. And more text. And more text. And more text.
+And more text. And more text. And more text. And more text. And more
+text. And more text. Boring, zzzzz. And more text. And more text. And
+more text. And more text. And more text. And more text. And more text.
+And more text. And more text.
+And more text. And more text. And more text. And more text. And more
+text. And more text. And more text. Even more. Continued on page 2 ...
