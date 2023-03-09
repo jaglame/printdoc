@@ -1,9 +1,6 @@
 """
 lp -d HP-Deskjet-1010-series sample.pdf
 
-lp -d Deskjet-2050-J510-series sample_1MB.pdf
-
-
 """
 
 import json

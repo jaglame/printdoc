@@ -1,3 +1,4 @@
 output
 printdoc.egg-info
 printdoc/__pycache__
+printdoc/config.ini

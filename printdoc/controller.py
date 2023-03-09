@@ -31,7 +31,7 @@ def do_test(d):
     with open(pfile, mode) as f:
         f.write(value)
 
-    return "TEST OK"
+    return "TEST"
 
 def do_cups(d):
     """ Se envía una orden de impresión (stdin=input).

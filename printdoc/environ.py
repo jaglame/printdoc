@@ -57,31 +57,33 @@ def application(environ, response):
          "content_length": content_length,
          "test_local": test_local}
 
-    value = ""
-    if method == "POST":
-        value = read_input(d)
-    d["value"] = value
-
-    session.d = session
-
-    try:
-        result = controller(d)
+    if method == "GET":
         d["status"] = "200 OK"
         d["headers"] = [("CONTENT-TYPE", "text/plain")]
-        d["data"] = result
+        d["data"] = "RUNNING"
+    else:
+        # POST.
+        value = read_input(d)
+        d["value"] = value
+        session.d = session
 
-    except Exception as e:
-        msg = traceback.format_exc()
-        logging.exception(msg)
-        d["status"] = "500 Internal Server Error"
-        d["headers"] = [("CONTENT-TYPE", "text/plain")]
-        d["data"] = "ERROR"
+        try:
+            result = controller(d)
+            d["status"] = "200 OK"
+            d["headers"] = [("CONTENT-TYPE", "text/plain")]
+            d["data"] = result
 
-    del session.d    
+        except Exception as e:
+            msg = traceback.format_exc()
+            logging.exception(msg)
+            d["status"] = "500 Internal Server Error"
+            d["headers"] = [("CONTENT-TYPE", "text/plain")]
+            d["data"] = "ERROR"
+
+        del session.d    
 
     response(str(d["status"]), list(d["headers"]))
     data = response_data(d["data"])
-
     return data
 
 
