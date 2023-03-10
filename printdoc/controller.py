@@ -49,7 +49,51 @@ def do_cups(d):
     result = p.stdout or p.stderr
     return result
 
-def controller(d):
+def do_list():
+    """ """
+    cmd = "lpstat -v"
+    p = subprocess.run([cmd], shell=True, stdout=PIPE, stderr=PIPE)
+    data = p.stdout.decode()
+    return data
+
+def do_queue(printer):
+    """ HP-Deskjet-1010-series-422 jose 23552 vie 10 mar 2023 00:41:31 -03 """
+
+    cmd = "lpstat -o"
+    if printer:
+        cmd += " " + printer
+    
+    p = subprocess.run([cmd], shell=True, stdout=PIPE, stderr=PIPE)
+    data = p.stdout or p.stderr or "(Cola vacia)"
+    return data
+
+
+def do_running(d):
+    """ """
+    cmd = "lpstat -r"
+    p = subprocess.run([cmd], shell=True, stdout=PIPE, stderr=PIPE)
+    data = p.stdout or p.stderr
+    return "CUPS server: %s" % data.decode()
+
+
+
+def on_get(d):
+    """ """
+
+    path = d["path"]
+    query = d["query"]
+    
+    if path == "/cola":
+        printer = query.get("printer")
+        return do_queue(printer)
+    
+    if path == "/list":
+        return do_list()
+
+    return do_running(d)
+
+
+def on_post(d):
     """ """
 
     query = d["query"]

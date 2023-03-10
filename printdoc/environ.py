@@ -5,7 +5,7 @@ import logging
 import traceback
 from cgi import FieldStorage
 from urllib.parse import parse_qsl, unquote
-from printdoc.controller import controller
+from printdoc.controller import on_post, on_get
 
 session = threading.local() # Si se ejecutan varios hilos. 
 logging.basicConfig(level=logging.INFO)
@@ -57,31 +57,46 @@ def application(environ, response):
          "content_length": content_length,
          "test_local": test_local}
 
+    session.d = d
+
+    d["status"] = "200 OK"
+    d["headers"] = [("CONTENT-TYPE", "text/plain; charset=utf-8")]
+
     if method == "GET":
-        d["status"] = "200 OK"
-        d["headers"] = [("CONTENT-TYPE", "text/plain")]
-        d["data"] = "RUNNING"
+
+        d["value"] = ""
+
+        try:
+            result = on_get(d)
+
+            #d["headers"] = [("CONTENT-TYPE", "text/plain")]
+            d["data"] = result
+        except Exception as e:
+            msg = traceback.format_exc()
+            logging.exception(msg)
+            d["status"] = "500 Internal Server Error"
+            #d["headers"] = [("CONTENT-TYPE", "text/plain")]
+            d["data"] = "ERROR"
+
     else:
         # POST.
         value = read_input(d)
         d["value"] = value
-        session.d = session
 
         try:
-            result = controller(d)
-            d["status"] = "200 OK"
-            d["headers"] = [("CONTENT-TYPE", "text/plain")]
+            result = on_post(d)
+            #d["status"] = "200 OK"
+            #d["headers"] = [("CONTENT-TYPE", "text/plain")]
             d["data"] = result
 
         except Exception as e:
             msg = traceback.format_exc()
             logging.exception(msg)
             d["status"] = "500 Internal Server Error"
-            d["headers"] = [("CONTENT-TYPE", "text/plain")]
+            #d["headers"] = [("CONTENT-TYPE", "text/plain")]
             d["data"] = "ERROR"
 
-        del session.d    
-
+    del session.d    
     response(str(d["status"]), list(d["headers"]))
     data = response_data(d["data"])
     return data
