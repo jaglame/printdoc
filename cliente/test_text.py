@@ -11,7 +11,7 @@ HOST = "localhost"
 PORT = 9191
 
 data = open("sample_text.txt", "r")
-query = {"recurso": "HP-Deskjet-1010-series",
+query = {"printer": "HP-Deskjet-1010-series",
          "filename": "recurso.txt",
          "test": "false"}
 

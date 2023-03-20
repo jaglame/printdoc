@@ -1,4 +1,5 @@
 
+import jinja2
 import os
 import threading
 import logging
@@ -9,10 +10,10 @@ from printdoc.controller import on_post, on_get
 
 session = threading.local() # Si se ejecutan varios hilos. 
 logging.basicConfig(level=logging.INFO)
+p = os.path
 
 def get_path():
     """ """
-    p = os.path
     path = p.abspath(p.dirname(__file__))
     return path
 
@@ -36,6 +37,9 @@ def read_input(d):
     #        return data.decode("utf-8")  # json.
     return data
 
+loader = jinja2.FileSystemLoader(p.join(ENV_PATH, "template"))
+tmpl = jinja2.Environment(loader=loader)
+
 def application(environ, response):
     """ """
 
@@ -55,7 +59,8 @@ def application(environ, response):
          "query": query,
          "content_type": content_type,
          "content_length": content_length,
-         "test_local": test_local}
+         "test_local": test_local,
+         "tmpl": tmpl}
 
     session.d = d
 

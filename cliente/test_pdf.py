@@ -12,7 +12,7 @@ PORT = 9191
 
 
 data = open("sample.pdf", "rb")
-query = {"recurso": "HP-Deskjet-1010-series",
+query = {"printer": "HP-Deskjet-1010-series",
          "filename": "recurso3.pdf",
          "test": "true"}
 

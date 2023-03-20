@@ -1,0 +1,123 @@
+ <!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Cola</title>
+        <style>
+
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 18px;
+            }
+
+            table#printers {
+              border-collapse: collapse;
+              width: 100%;
+            }
+
+            #printers td, #printers th {
+              border: 1px solid #ddd;
+              padding: 6px;
+            }
+
+            .td-btns {
+                text-align: center;
+            }
+
+            #header {
+                text-align: center;
+            }
+
+            .status{
+                padding: 10px 0;
+            }
+
+            input {
+                font-size: inherit;
+                width: 200px;
+            }
+
+        </style>
+    </head>
+
+    <body>
+
+        <header id="header">
+            <h2>Cola de Impresión</h2>
+            {% if query.get("printer") %}
+            <h3>{{ query["printer"]}}</h3>
+            {% endif %}
+        </header>
+
+        <a href="/printers">Todas las Impresoras</a>    
+        <span>·</span>
+        <a href="/queue">Todas las Colas</a>    
+    
+        <br>
+        <br>
+        <!--form action="/printers">
+            <label> Impresora:
+                <input type="text" name="q" value="{{ query.get('q', '') }}">
+            </label>
+            <hr>
+        </form-->
+
+        <table id="printers">
+            <tr>
+                <th>Impresora</th>
+                <th>Job ID</th>
+                <th>Momento</th>
+                <th>Cancelar</th>
+            </tr>
+        {% for d_row in jobs %}
+            <tr>
+                <td>
+                    <a href="/printers?printer={{ d_row['printer']}}">{{  d_row["printer"] }}</a>    
+                </td>
+                <td>{{ d_row["jobid"] }}</td>
+                <td>{{ d_row["time"] }}</td>
+                <td class="td-btns">
+                    <!--button class="btn" data-jobid="{{ d_row['jobid'] }}">Cancelar</button-->
+                    <button class="btn" data-action="/cancel?jobid={{ d_row['jobid'] }}">Cancelar</button>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+        <div class="status">{{ status }}</div>
+        {% if query.get("printer") %}
+            <hr>
+            <button class="btn" data-action="/cancel_all?printer={{ query['printer'] }}">Cancelar Todo ({{ query['printer'] }})</button>
+        {% else %}
+            <hr>
+            <button class="btn" data-action="/cancel_all?printer=*">Cancelar Todo</button>
+        {% endif %}
+    </body>
+
+    <script>
+    (() => {
+
+        let onclick = btn => {
+            btn.addEventListener("click", async e => {
+
+                //let {jobid} = btn.dataset;
+                //let url = `/cancel?jobid=${jobid}`;
+                let {action} = btn.dataset;
+
+                let p = fetch(action);
+                p = p.then(response => response.text());
+                p.then(result => {
+                    console.log("result");
+                    alert(result); //`Orden de impresión enviada a <${printer}> tipo <${type}>`);
+                    window.location.reload();
+                });
+            });
+        }
+
+        for(let btn of document.querySelectorAll(".btn")) {
+            onclick(btn);
+        }
+    })();
+    </script>
+
+</html> 

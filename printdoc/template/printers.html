@@ -1,0 +1,116 @@
+ <!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Impresoras</title>
+        <style>
+
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 18px;
+            }
+
+            table#printers {
+              border-collapse: collapse;
+              width: 100%;
+            }
+
+            #printers td, #printers th {
+              border: 1px solid #ddd;
+              padding: 6px;
+            }
+
+            .td-btns {
+                text-align: center;
+            }
+
+            #header {
+                text-align: center;
+            }
+
+            .status{
+                padding: 10px 0;
+            }
+
+            input {
+                font-size: inherit;
+                width: 200px;
+            }
+
+        </style>
+    </head>
+
+    <body>
+
+        <header id="header">
+            <h2>Impresoras Disponibles</h2>
+            {% if query.get("printer") %}
+            <h3>{{ query["printer"]}}</h3>
+            {% endif %}
+        </header>
+
+        <a href="/printers">Todas las Impresoras</a>    
+        <span>·</span>
+        <a href="/queue">Todas las Colas</a>  
+
+        <br>
+        <br>
+        <form action="/printers">
+            <label> Impresora:
+                <input type="text" name="q" value="{{ query.get('q', '') }}">
+            </label>
+            <hr>
+        </form>
+
+        <table id="printers">
+            <tr>
+                <th>Impresora</th>
+                <th>Cola</th>
+                <th>URI</th>
+                <th>Test</th>
+            </tr>
+        {% for d_row in printers %}
+            <tr>
+                <td>
+                    <a href="/printers?printer={{ d_row['printer']}}">{{  d_row["printer"] }}</a>    
+                </td>
+                <td>
+                    <a href="/queue?printer={{ d_row['printer']}}">Ver</a>    
+                </td>
+                <td>{{ d_row["uri"] }}</td>
+                <td class="td-btns">
+                    <button class="btn" data-printer="{{ d_row['printer'] }}" data-type="txt">TXT</button>
+                    <button class="btn" data-printer="{{ d_row['printer'] }}" data-type="pdf">PDF</button>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+        <div class="status">{{ status }}</div>
+    </body>
+
+    <script>
+    (() => {
+
+        let onclick = btn => {
+            btn.addEventListener("click", async e => {
+
+                let {printer, type} = btn.dataset;
+                let url = `/test?printer=${printer}&type=${type}`;
+
+                let p = fetch(url);
+                p = p.then(response => response.text());
+                p.then(result => {
+                    console.log("result");
+                    alert(result); //`Orden de impresión enviada a <${printer}> tipo <${type}>`);
+                });
+            });
+        }
+
+        for(let btn of document.querySelectorAll(".btn")) {
+            onclick(btn);
+        }
+    })();
+    </script>
+
+</html> 

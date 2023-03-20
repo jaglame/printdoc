@@ -7,7 +7,8 @@ setup(
     # Dependencias que se instalarán.
     install_requires = [
         "uwsgi",
-        "requests"
+        "requests",
+        "jinja2"
     ]
 )
 
