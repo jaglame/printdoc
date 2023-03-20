@@ -12,11 +12,12 @@ PORT = 9191
 
 
 data = open("sample.pdf", "rb")
-query = {"printer": "HP-Deskjet-1010-series",
-         "filename": "recurso3.pdf",
-         "test": "true"}
+#query = {"printer": "HP-Deskjet-1010-series"}
+query = {"printer": "PDF"}
 
-headers = {"CONTENT-TYPE": "application/pdf"}
+#headers = {"CONTENT-TYPE": "application/pdf"}
+headers = {"CONTENT-TYPE": "application/octet-stream"}
+
 qstring = urlencode(query)
 response = requests.post("http://%s:%s?%s" % (HOST, PORT, qstring), data=data, headers=headers)
 
