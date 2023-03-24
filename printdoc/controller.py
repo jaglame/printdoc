@@ -2,6 +2,7 @@
 import os
 import logging
 import subprocess
+import json
 from os import path as _p
 from subprocess import Popen, PIPE, STDOUT
 
@@ -232,6 +233,13 @@ def do_running(d):
     data = p.stdout or p.stderr
     return "CUPS: %s" % data.decode()
 
+
+def do_list(d):
+    """ """
+    query = d["query"]
+    printers = get_printers(query)
+    return json.dumps(printers)
+
 def on_get(d):
     """ """
 
@@ -256,6 +264,10 @@ def on_get(d):
               "query": query,
               "status": status}
         return tmpl.get_template("printers.html").render(_d)
+
+    if path == "/list":
+        d["headers"] = [("CONTENT-TYPE", "application/json; charset=utf-8")]
+        return do_list(d)
 
     if path == "/cancel":
         return do_cancel(d)
