@@ -35,11 +35,20 @@ def do_local(d):
     return "TEST"
 
 
-def lpd(printer, data):
+def lpd(printer, data, options=""):
     """ Se envía una orden de impresión (stdin=input).
-    lp -d recurso -
+    lp -d printer_name -
+    lp -d printer_name -o raw -
+
+    options = "-o raw"
     """
-    cmd = ["lp -d %s" % printer, "-"] #"lp -d %s" % (printer, )    
+
+    lp = "lp -d %s" % printer
+
+    if options:
+        lp += " " + options
+
+    cmd = [lp, "-"] #"lp -d %s" % (printer, )    
     logging.info("lpd: %s" % str(cmd))
 
     #p = subprocess.run(cmd, shell=True, stdout=PIPE, stderr=PIPE, input=data, timeout=2)
@@ -99,7 +108,8 @@ def do_print(d):
     query = d["query"]
     data = d["value"]
     printer = query.get("printer") or query.get("recurso")    
-    return lpd(printer, data)
+    options = query.get("options", "")
+    return lpd(printer, data, options)
 
 def do_test(d):
     """ """
@@ -108,6 +118,7 @@ def do_test(d):
     query = d["query"]
 
     printer = query["printer"]
+    options = query.get("options", "")
     _type = query["type"]
 
     if _type == "txt":
@@ -120,7 +131,7 @@ def do_test(d):
     try:
         msg = "" #f"Orden de impresión enviada a <{printer}> tipo <{_type}>"
         with open(pfile, "rb") as f:
-            msg = lpd(printer, f.read())
+            msg = lpd(printer, f.read(), options)
 
     except Exception as e:
         msg = str(e)
