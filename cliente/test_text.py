@@ -12,7 +12,8 @@ PORT = 9191
 
 data = open("sample_text.txt", "r")
 #query = {"printer": "HP-Deskjet-1010-series"}
-query = {"printer": "PDF"}
+query = {"printer": "PDF",
+         "options": "-n2"}
          #"filename": "recurso.txt",
          #"test": "false"}
 
