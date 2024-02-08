@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Para activar en la consola
+# . activate
+
+SOURCE=${BASH_SOURCE[0]:-$0}
+BASEDIR=$(dirname $SOURCE)
+ACTIVATE=$BASEDIR/env/bin/activate
+source $ACTIVATE
+cd $BASEDIR/printdoc
