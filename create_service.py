@@ -25,6 +25,7 @@ After=network.target
 
 [Service]
 User=%(user)s
+Group=%(group)s
 ExecStart=%(shell)s %(script_path)s
 Type=simple
 Restart=always
@@ -46,6 +47,7 @@ def get_service_data(d):
     _d = {
         "description": "Printer Document Server",
         "user": "jose",
+        "group": "jose",
         "exec": "/home/jose/Escritorio/proyectos/github/printdoc/printdoc/serve_uwsgi",
     }
 
@@ -123,6 +125,7 @@ def run():
     service_path = _p.join(etc_path, SERVICE)
 
     d = {"user": user,
+         "group": user,
          "service": SERVICE,
          "shell": shell, #"/usr/bin/bash",
          "etc_path": etc_path,   
