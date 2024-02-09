@@ -107,28 +107,31 @@ def do_print(d):
     options = query.get("options", "")
     return lpd(printer, data, options)
 
-def do_test(d):
+def get_file_test(d):
     """ """
-
     curdir = d["curdir"]
     query = d["query"]
+    _type = query.get("type", "txt")
 
-    printer = query["printer"]
-    options = query.get("options", "")
-    _type = query["type"]
-
-    if _type == "txt":
-        pfile = _p.join(curdir, "files/demo.txt")
-    elif _type == "pdf":
+    if _type == "pdf":
         pfile = _p.join(curdir, "files/demo.pdf")
+    else:
+        pfile = _p.join(curdir, "files/demo.txt")
 
     logging.info("read: %s" % pfile)
+    with open(pfile, "rb") as f:
+        return f.read()
+
+def do_test(d):
+    """ """
+    query = d["query"]
+    printer = query["printer"]
+    options = query.get("options", "")
 
     try:
-        msg = "" #f"Orden de impresión enviada a <{printer}> tipo <{_type}>"
-        with open(pfile, "rb") as f:
-            msg = lpd(printer, f.read(), options)
-
+        msg = ""
+        data = get_file_test(d)
+        msg = lpd(printer, data, options)
     except Exception as e:
         msg = str(e)
 
@@ -256,6 +259,51 @@ def do_smbclient(d):
     data = p.stdout or p.stderr
     return cmd + "\n" + data.decode()
 
+def get_smbversion(d):
+    """ """
+    cmd = f"smbclient -V"
+    logging.info("do_smbclient: %s" % cmd)
+    p = subprocess.run([cmd], shell=True, stdout=PIPE, stderr=PIPE)
+    data = p.stdout or p.stderr
+    return data.decode()
+
+def smbprint(ip, printer, data, options=""):
+    """ """
+    # /var/spool/cups-pdf/ANONYMOUS
+    cmd = [f'smbclient -N //{ip}/{printer} -c "print -"']
+    logging.info("client: %s" % str(cmd))
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell=True)
+    p.stdin.write(data)
+    p.stdin.flush()
+    stdout, stderr = p.communicate(timeout=3)
+    result = (stdout or stderr)
+    p.stdin.close()
+    logging.info("client: %s" % result)
+    return result
+
+def do_smbprint(d):
+    """ """
+    query = d["query"]
+    data = d["value"]
+    printer = query.get("printer") or query.get("recurso")    
+    options = query.get("options", "")
+    return smbprint(printer, data, options)
+
+def do_smbprint_test(d):
+
+    query = d["query"]
+    ip = query.get("ip") or "127.0.0.1"
+    printer = query["printer"]
+    options = query.get("options", "")
+    try:
+        msg = ""
+        data = get_file_test(d)
+        msg = smbprint(ip, printer, data, options)
+    except Exception as e:
+        raise
+        msg = str(e)
+    return msg
+
 def on_get(d):
     """ """
 
@@ -273,10 +321,11 @@ def on_get(d):
         return tmpl.get_template("queue.html").render(_d)
 
     if path == "/listsmb":
+        version = get_smbversion(d)
         d["headers"] = [("CONTENT-TYPE", "text/html; charset=utf-8")]
         _d = {"jobs": [],
               "query": query,
-              "status": "xxx"}
+              "version": version}
         return tmpl.get_template("listsmb.html").render(_d)
 
     if path == "/printers" or path == "/":
@@ -291,6 +340,9 @@ def on_get(d):
 
     if path == "/do_smbclient":
         return do_smbclient(d);
+
+    if path == "/do_smbprint_test":
+        return do_smbprint_test(d);
 
     if path == "/list":
         d["headers"] = [("CONTENT-TYPE", "application/json; charset=utf-8")]

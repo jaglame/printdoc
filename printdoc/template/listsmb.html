@@ -48,11 +48,10 @@
 
         </style>
     </head>
-
     <body>
-
         <header id="header">
             <h2>Listar SMBClient</h2>
+            <h4>{{version}}</h4>
         </header>
 
         <a href="/printers">Todas las Impresoras</a>    
@@ -65,6 +64,12 @@
         <label>IP:</label>    
         <input type="text" id="ip">
         <button id="buscar">Buscar</button>
+        <span>·</span>
+        <label>Printer:</label>    
+        <input type="text" id="printer">
+        <button id="print_txt">(TXT)</button>
+        <button id="print_pdf">(PDF)</button>
+
         <hr>
         <textarea class="output" rows=26 id="output">
         </textarea>
@@ -74,6 +79,9 @@
     <script>
         let buscar = document.getElementById("buscar");
         let ip = document.getElementById("ip");
+        let print_txt = document.getElementById("print_txt");
+        let print_pdf = document.getElementById("print_pdf");
+        let printer = document.getElementById("printer");
         let output = document.getElementById("output");
     
         let _buscar = () => {
@@ -91,5 +99,17 @@
                 _buscar();
             }
         })
+
+        print_txt.addEventListener("click", e => {
+            let p = fetch(`/do_smbprint_test?ip=${ip.value}&printer=${printer.value}&type=txt`);
+            p = p.then(response => response.text());
+            p.then(r => alert(r));
+        });
+
+        print_pdf.addEventListener("click", e => {
+            let p = fetch(`/do_smbprint_test?ip=${ip.value}&printer=${printer.value}&type=pdf`);
+            p = p.then(response => response.text());
+            p.then(r => alert(r));
+        });
     </script>
 </html> 
