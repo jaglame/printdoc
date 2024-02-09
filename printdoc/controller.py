@@ -245,13 +245,24 @@ def do_list(d):
     printers = get_printers(query)
     return json.dumps(printers)
 
+def do_smbclient(d):
+    """ cmd = smbclient -N -L 127.0.0.1 -U % """
+
+    query = d["query"]
+    ip = query.get("ip") or "127.0.0.1"
+    cmd = f"smbclient -N -L {ip}"
+    logging.info("do_smbclient: %s" % cmd)
+    p = subprocess.run([cmd], shell=True, stdout=PIPE, stderr=PIPE)
+    data = p.stdout or p.stderr
+    return cmd + "\n" + data.decode()
+
 def on_get(d):
     """ """
 
     path = d["path"]
     query = d["query"]
     tmpl = d["tmpl"]
-    
+
     if path == "/queue":
         jobs = do_queue(query)
         status = do_running(d)
@@ -261,6 +272,13 @@ def on_get(d):
               "status": status}
         return tmpl.get_template("queue.html").render(_d)
 
+    if path == "/listsmb":
+        d["headers"] = [("CONTENT-TYPE", "text/html; charset=utf-8")]
+        _d = {"jobs": [],
+              "query": query,
+              "status": "xxx"}
+        return tmpl.get_template("listsmb.html").render(_d)
+
     if path == "/printers" or path == "/":
         printers = get_printers(query)
         status = do_running(d)
@@ -269,6 +287,10 @@ def on_get(d):
               "query": query,
               "status": status}
         return tmpl.get_template("printers.html").render(_d)
+
+
+    if path == "/do_smbclient":
+        return do_smbclient(d);
 
     if path == "/list":
         d["headers"] = [("CONTENT-TYPE", "application/json; charset=utf-8")]

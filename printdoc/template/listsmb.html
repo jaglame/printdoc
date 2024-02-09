@@ -1,0 +1,95 @@
+ <!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Listar SMBClient</title>
+        <style>
+
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 18px;
+                background-color: Canvas;
+                color: CanvasText;
+                color-scheme: light dark;
+            }
+
+            table#printers {
+              border-collapse: collapse;
+              width: 100%;
+            }
+
+            #printers td, #printers th {
+              border: 1px solid #ddd;
+              padding: 6px;
+            }
+
+            .td-btns {
+                text-align: center;
+            }
+
+            #header {
+                text-align: center;
+            }
+
+            .status{
+                padding: 10px 0;
+            }
+
+            input {
+                font-size: inherit;
+                width: 200px;
+            }
+
+            .output {
+                width: 600px;
+                
+            }
+
+        </style>
+    </head>
+
+    <body>
+
+        <header id="header">
+            <h2>Listar SMBClient</h2>
+        </header>
+
+        <a href="/printers">Todas las Impresoras</a>    
+        <span>·</span>
+        <a href="/queue">Todas las Colas</a>
+        <span>·</span>
+        <a href="/listsmb">Listar SMBClient</a>  
+        <hr>
+
+        <label>IP:</label>    
+        <input type="text" id="ip">
+        <button id="buscar">Buscar</button>
+        <hr>
+        <textarea class="output" rows=26 id="output">
+        </textarea>
+
+    </body>
+
+    <script>
+        let buscar = document.getElementById("buscar");
+        let ip = document.getElementById("ip");
+        let output = document.getElementById("output");
+    
+        let _buscar = () => {
+            output.value = "(Espere...)";
+            let p = fetch(`/do_smbclient?ip=${ip.value}`);
+            p = p.then(response => response.text());
+            p.then(r => {
+                output.value = r;
+            });
+        }
+
+        buscar.addEventListener("click", e => _buscar());
+        ip.addEventListener("keydown", e => {
+            if(e.key == "Enter") {
+                _buscar();
+            }
+        })
+    </script>
+</html> 
