@@ -34,7 +34,6 @@ def do_local(d):
 
     return "TEST"
 
-
 def lpd(printer, data, options=""):
     """ Se envía una orden de impresión (stdin=input).
     lp -d printer_name -
@@ -102,7 +101,6 @@ def do_cancel_all(d):
 
     return result
 
-    
 def do_print(d):
     """ """
     query = d["query"]
@@ -180,7 +178,6 @@ def get_printers(query=None):
 
     return printers
 
-
 def get_jobs(printer):
     """
     HP-Deskjet-1010-series-561 jose             55296   lun 20 mar 2023 06:06:06 -03
@@ -244,7 +241,6 @@ def do_running(d):
     data = p.stdout or p.stderr
     return "CUPS: %s" % data.decode()
 
-
 def do_list(d):
     """ """
     query = d["query"]
@@ -291,7 +287,6 @@ def on_get(d):
 
     return do_running(d)
 
-
 def on_post(d):
     """ """
 
@@ -306,7 +301,3 @@ def on_post(d):
     logging.info("OUT: %s" % result)
     return result
     
-
-      
-
-

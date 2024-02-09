@@ -73,14 +73,11 @@ def application(environ, response):
 
         try:
             result = on_get(d)
-
-            #d["headers"] = [("CONTENT-TYPE", "text/plain")]
             d["data"] = result
         except Exception as e:
             msg = traceback.format_exc()
             logging.exception(msg)
             d["status"] = "500 Internal Server Error"
-            #d["headers"] = [("CONTENT-TYPE", "text/plain")]
             d["data"] = "ERROR"
 
     else:
@@ -90,15 +87,12 @@ def application(environ, response):
 
         try:
             result = on_post(d)
-            #d["status"] = "200 OK"
-            #d["headers"] = [("CONTENT-TYPE", "text/plain")]
             d["data"] = result
 
         except Exception as e:
             msg = traceback.format_exc()
             logging.exception(msg)
             d["status"] = "500 Internal Server Error"
-            #d["headers"] = [("CONTENT-TYPE", "text/plain")]
             d["data"] = "ERROR"
 
     del session.d    
