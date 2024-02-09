@@ -50,14 +50,12 @@ def lpd(printer, data, options=""):
     cmd = [lp, "-"] #"lp -d %s" % (printer, )    
     logging.info("lpd: %s" % str(cmd))
 
-    #p = subprocess.run(cmd, shell=True, stdout=PIPE, stderr=PIPE, input=data, timeout=2)
-    #result = p.stdout or p.stderr
-
     p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=PIPE, shell=True)
     p.stdin.write(data)
     p.stdin.flush()
     stdout, stderr = p.communicate(timeout=3)
     result = (stdout or stderr)
+    p.stdin.close()
 
     logging.info("lpd: %s" % result)
     return result
